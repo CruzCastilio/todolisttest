@@ -1,0 +1,59 @@
+@*
+ * This template takes a single argument, a String containing a
+ * message to display.
+ *@
+@(tasks: List[Task], taskForm: Form[(String, String)])(implicit messages: Messages)
+
+@import helper._
+
+@*
+ * Call the `main` template with two arguments. The first
+ * argument is a `String` with the title of the page, the second
+ * argument is an `Html` object containing the body of the page.
+ *@
+@main("ToDo list") {
+
+    @*
+     * Get an `Html` object by calling the built-in Play welcome
+     * template and passing a `String` message.
+     *@
+
+    <h1>@tasks.size idea(s)</h1>
+
+    <table style="text-align: center; border: 1px double black; width: 100%;">
+        <tr><th>Idea</th><th>Who</th><th>When</th><th>Status</th><th>Complete?</th></tr>
+        @tasks.map {task =>
+            @if(task.ready == 0) {<tr>}else{
+                <tr style="color: red; font-weight: bold; font-size: 16px;">
+                }
+                <td>@task.label</td>
+                <td>@task.who</td>
+                <td>@task.mytime</td>
+                <td>@if(task.ready == 0) {unfinished}else{finished}</td>
+                <td>
+                    <table align="center">
+                        <td>@form(routes.HomeController.deleteTask(task.id)) {
+                            <input type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                            }</td>
+                        @if(task.ready == 0) {
+                            <td>@form(routes.HomeController.completeTask(task.id)) {
+                                <input type="submit" value="done?" onclick="return confirm('Are you sure?');">
+                                }</td>
+                        }
+                    </table>
+                </td>
+                </tr>
+        }
+    </table>
+
+    <h2>Add a new idea</h2>
+
+    @form(routes.HomeController.newTask) {
+
+    @inputText(taskForm("label"))
+    @inputText(taskForm("who"))
+
+    <input type="submit" value="Create">
+    }
+
+}
